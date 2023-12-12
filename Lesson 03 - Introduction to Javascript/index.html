@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<header>
+    <title>Lesson 03 - Introduction to Javascript</title>
+</header>
+
+<body>
+    <input type="text" id="input1" style="color:blue"></input> &#247;
+    <input type="text" id="input2" style="color:yellow"></input>
+    <button onclick="calculate()">=</button> <span id="result"></span><br>
+
+    <script>
+        function calculate() {
+            // Get the value of HTML element by the Id called input1,
+            // convert the value into integer and store it in the
+            // num1 variable
+            var num1 = parseInt(document.getElementById('input1').value);
+            var num2 = parseInt(document.getElementById('input2').value);
+            var ans = num1 / num2;
+            document.getElementById('result').innerText = ans;
+        }
+    </script>
+</body>
+
+</html>

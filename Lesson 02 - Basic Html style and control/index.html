@@ -1,0 +1,70 @@
+<html>
+    <header>
+        <title>
+            Lesson 02 - Basic Html style and control
+        </title>
+        <style>
+            .red {
+                color: rgb(18, 3, 104);
+            }
+
+            .bold {
+                font-weight: bold;
+            }
+
+            .red-bold {
+                color: rgb(253, 0, 0);
+                font-weight: bold;
+            }
+
+            .underline {
+                text-decoration: underline;
+            }
+
+            #redTextSpan {
+                color: rgb(253, 0, 0);
+            }
+        </style>
+    </header>
+    <body>
+        <a href="http://www.google.com" target="_blank">This is a link to google</a>
+        
+        <a href="page2.html"> This is to my page 2</a>
+
+        <h1>This is my section</h1>
+        <h2>This is my sub heading</h2>
+        <p class="red bold underline">Hello world</p>
+        <b class="red">bold text</b>
+        <i class="red">Italic text</i>
+        <p>Is sunny day today</p>
+        <span class="red bold underline">This is span</span>
+        <input type="text">
+        <input type="checkbox">
+        <input type="color">
+        <input type="datetime">
+        <input type="file">
+        <span id="redTextSpan">This is a red text 1</span>
+
+        <ul>
+            <li>Remeber to do my homework</li>
+            <li>Go to school tomorrow at 8:00</li>
+            <li>Make sure to get home before 15:00</li>
+        </ul>
+
+        <ol>
+            <li>Remeber to do my homework</li>
+            <li>Go to school tomorrow at 8:00</li>
+            <li>Make sure to get home before 15:00</li>
+        </ol>
+
+        <button onclick="add(1,1)">1 + 1</button>
+
+        <script>
+            function add(num1, num2) {
+                var ans = num1 + num2;
+                alert(ans);
+            }
+        </script>
+    </body>
+
+</html>
