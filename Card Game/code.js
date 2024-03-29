@@ -1,83 +1,228 @@
 document.addEventListener("DOMContentLoaded", ready);
-var timeoutId;
-var intervalId;
-var openCount = 0;
-var card1 = {
-    id: '',
-    number: null
+
+class Card {
+    constructor(element) {
+        this.element = element;
+        this.number = null;
+        this.isMatched = false;
+        this.isflipped = false;
+    }
+
+    reset() {
+        this.number = null;
+        this.isMatched = false;
+        this.isflipped = false;
+    }
+
+    flip() {
+        if (!this.isMatched && !this.isflipped) {
+            // this.isflipped = !this.isflipped;
+            // this.element.classList.toggle('is-flipped');
+
+            this.isflipped = true;
+            this.element.classList.add('is-flipped');
+        }
+    }
+
+    unFlip() {
+        this.isflipped = false;
+        this.element.classList.remove('is-flipped');
+    }
+
+    setNumber(newNumber) {
+        this.number = newNumber;
+        let face = this.element.querySelector('.card-face-back');
+        face.innerHTML = newNumber;
+    }
 }
-var card2 = {
-    id: '',
-    number: null
+
+class CardGame {
+    constructor(numberOfCards) {
+        this.numberOfCards = numberOfCards;
+        this.cards = [];
+        this.isStarted = false;
+
+        let cardElements = document.querySelectorAll('.card');
+
+        cardElements.forEach((cardElement) => {
+            const card = new Card(cardElement)
+            this.cards.push(card);
+        });
+    }
+
+    start() {
+        this.unFlipAllCards();
+        this.cards.forEach((card) => {
+            card.reset();
+        });
+
+        this.isStarted = true;
+        this.assignCardNumber();        
+    }
+
+    assignCardNumber() {
+        let cardNumber = 0;
+        let assignCount = 0;
+
+        while (!this.allCardHasNumber()) {
+            cardNumber = cardNumber + 1;
+            assignCount = 0;
+
+            while (assignCount < 2) {
+                let cardIndex = Math.floor(Math.random() * this.numberOfCards);
+
+                if (this.cards[cardIndex].number == null) {
+                    this.cards[cardIndex].setNumber(cardNumber);
+                    assignCount++;
+                }
+            }
+        }
+    }
+
+    allCardHasNumber() {
+        for (const card of this.cards) {
+            if (card.number == null)
+                return false;
+        }
+
+        return true;
+    }
+
+    cardFlipCount() {
+        let count = 0;
+
+        this.cards.forEach((card) => {
+            if (card.isflipped && !card.isMatched) {
+                count++;
+            }
+        });
+
+        return count;
+    }
+
+    unFlipNotMatchedCards() {
+        this.cards.forEach((card) => {
+            if (card.isflipped && !card.isMatched) {
+                card.unFlip();
+            }
+        });
+    }
+
+    unFlipAllCards() {
+        this.cards.forEach((card) => {
+            card.unFlip();
+        });
+    }
+
+    hasAllCardMatched() {
+        let cardMatchedCount = 0;
+
+        this.cards.forEach((card) => {
+            if (card.isMatched) {
+                cardMatchedCount++;
+            }
+        });
+
+        if (cardMatchedCount == this.numberOfCards) {
+            return true;
+        }
+
+        return false;
+    }
+
+    checkCardMatchingStatus() {
+        let card1 = null;
+        let card2 = null;
+
+        this.cards.forEach((card) => {
+            if (card.isflipped && !card.isMatched) {
+                if (card1 == null) {
+                    card1 = card;
+                } else if (card2 == null) {
+                    card2 = card;
+                }
+            }
+        });
+
+        // Set both cards matched if teh number are the same
+        if (card1 && card2 && card1.number == card2.number) {
+            card1.isMatched = true;
+            card2.isMatched = true;
+        }
+    }
+
+    debugPrint() {
+        console.clear();
+        console.log('cardFlipCount', this.cardFlipCount());
+        console.log('isStarted', this.isStarted);
+        console.log('hasAllCardMatched', this.hasAllCardMatched())
+        this.cards.forEach((card) => {
+            console.log(card);
+        });
+    }
 }
-const numberOfCards = 8;
-var matchCount = 0;
-var totalSeconds = 0;
+
+const numberOfCards = document.querySelectorAll('.card').length;
+const cardGame = new CardGame(numberOfCards);
+let totalSeconds = 0;
+let intervalId;
 
 function ready() {
-    init();
+    cardGame.cards.forEach((card) => {
+        card.element.addEventListener('click', () => onCardClick(card));
+    })
 }
 
-function init() {
-    var cards = document.querySelectorAll('.card');
+function onCardClick(card) {
+    // do not allow to flip card until the game start
+    if (!cardGame.isStarted) {        
+        return;
+    }
 
-    cards.forEach((card) => {
-        card.addEventListener('click', function () {
-            // do not allow to flip the card until the game start
-            if (intervalId == null) {
-                return;
-            }
+    // do not allow to flip card is already matched
+    if (card.isMatched) {
+        return;
+    }
 
-            // do not allow to flip the card is already matched
-            if (card.dataset.match == 'true') {
-                return;
-            }
+    // do not allow to flip card if already has been flipped
+    if (card.isflipped) {
+        return;
+    }
 
-            // do not allow to flip until all the unmatched card have been reset
-            if (card1.number != null && card2.number != null) {
-                return;
-            }
+    // Check every third flip if card not matched
+    if (cardGame.cardFlipCount() > 1) {
+        cardGame.unFlipNotMatchedCards();
+    }
 
-            // increase teh open count to only allow two cards to open at the same time
-            openCount = openCount + 1;
+    // flip the card
+    card.flip();
 
-            if (openCount < 3) {
-                // Buffer the two cards have been opened
-                if (openCount == 1) {
-                    card1.id = card.id.replace('card-', '');
-                    card1.number = card.dataset.number;
-                }
-                else {
-                    card2.id = card.id.replace('card-', '');
-                    card2.number = card.dataset.number;
-                }
+    // check matching status again after the card has been flipped
+    cardGame.checkCardMatchingStatus();
 
-                // trigger the flip animation
-                card.classList.toggle('is-flipped');
+    // do not allow to flip card if all card have been matched
+    if (cardGame.hasAllCardMatched()) {
+        cardGame.isStarted = false;
 
-                // If the two cards are the same, mark them as matched
-                if (card1.id != card2.id && card1.number == card2.number) {
-                    setCardMatch(card1.id);
-                    setCardMatch(card2.id);
-                    clearTracking();
-                    matchCount++;
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+    }
 
-                    if (matchCount == (numberOfCards / 2)) {
-                        console.log('done');
-                        if (intervalId) {
-                            clearInterval(intervalId);
-                        }
-                    }
-                }
-                // if both card unmatched, flip the cards to hide the number
-                else if (openCount == 2) {
-                    timeoutId = setTimeout(unFlipCardsIfNotMatch, 1000);
-                }
-            }
+    cardGame.debugPrint();
+}
 
-            printCardNumber();
-        });
-    });
+function newGame() {
+    totalSeconds = 0;
+
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
+
+    intervalId = setInterval(setTime, 1000);
+
+    cardGame.start();
+    cardGame.debugPrint();
 }
 
 function setTime() {
@@ -90,141 +235,11 @@ function setTime() {
 }
 
 function pad(val) {
-    var valString = val + "";
+    let valString = val + "";
+
     if (valString.length < 2) {
         return "0" + valString;
     } else {
         return valString;
     }
-}
-
-function newGame() {
-    reset();
-}
-
-function unFlipAllCards() {
-    let cards = document.querySelectorAll('.is-flipped');
-
-    cards.forEach((card) => {
-        card.classList.remove('is-flipped');
-    });
-}
-
-function unFlipCardsIfNotMatch() {
-    let cards = document.querySelectorAll('.is-flipped');
-
-    cards.forEach((card) => {
-        if (card.dataset.match == 'false') {
-            card.classList.remove('is-flipped');
-        }
-    });
-
-    clearTracking();
-
-    if (timeoutId) {
-        clearTimeout(timeoutId);
-    }
-}
-
-function clearTracking() {
-    openCount = 0;
-    card1.id = '';
-    card1.number = null;
-    card2.id = '';
-    card2.number = null;
-}
-
-function reset() {
-    totalSeconds = 0;
-    matchCount = 0;
-
-    if (intervalId) {
-        clearInterval(intervalId);
-    }
-
-    intervalId = setInterval(setTime, 1000);
-
-    clearCardNumber();
-    assignCardNumber();
-    clearTracking();
-    unFlipAllCards();
-
-    printCardNumber();
-}
-
-function printCardNumber() {
-    let cards = document.querySelectorAll('.card');
-
-    console.log('===================');
-    cards.forEach((card) => {
-        console.log(card.id, card.dataset.number, card.dataset.match);
-    });
-    console.log('Match count', matchCount);
-    console.log('Open count', openCount);
-    console.log('===================');
-}
-
-function clearCardNumber() {
-    let cards = document.querySelectorAll('.card');
-
-    cards.forEach((card) => {
-        card.dataset.number = '';
-        card.dataset.match = 'false';
-    });
-}
-
-function assignCardNumber() {
-    let cardNumber = 0;
-    let assignCount = 0;
-
-    while (!allCardHasNumber()) {
-        cardNumber = cardNumber + 1;
-        assignCount = 0;
-
-        while (assignCount < 2) {
-            let cardId = Math.floor((Math.random() * numberOfCards) + 1);
-
-            if (!cardHasNumber(cardId)) {
-                setCardNumber(cardId, cardNumber);
-                assignCount++;
-            }
-        }
-    }
-}
-
-function setCardNumber(cardId, number) {
-    let card = getCard(cardId);
-    card.dataset.number = number;
-
-    let face = card.querySelector('.card-face-back');
-    face.innerHTML = number;
-}
-
-function setCardMatch(cardId) {
-    let card = getCard(cardId);
-    card.dataset.match = 'true';
-}
-
-function allCardHasNumber() {
-    let cards = document.querySelectorAll('.card');
-
-    for (const card of cards) {
-        if (card.dataset.number == '')
-            return false;
-    }
-
-    return true;
-}
-
-function cardHasNumber(cardId) {
-    let card = getCard(cardId);
-
-    if (card.dataset.number == '')
-        return false
-
-    return true;
-}
-
-function getCard(cardId) {
-    return document.getElementById('card-' + cardId);
 }
