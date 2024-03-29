@@ -10,7 +10,7 @@ var card2 = {
     id: '',
     number: null
 }
-const cardCount = 8;
+const numberOfCards = 8;
 var matchCount = 0;
 var totalSeconds = 0;
 
@@ -62,7 +62,7 @@ function init() {
                     clearTracking();
                     matchCount++;
 
-                    if (matchCount == (cardCount / 2)) {
+                    if (matchCount == (numberOfCards / 2)) {
                         console.log('done');
                         if (intervalId) {
                             clearInterval(intervalId);
@@ -81,10 +81,10 @@ function init() {
 }
 
 function setTime() {
-    var minutesLabel = document.getElementById("minutes");
-    var secondsLabel = document.getElementById("seconds");
+    let minutesLabel = document.getElementById("minutes");
+    let secondsLabel = document.getElementById("seconds");
 
-    ++totalSeconds;
+    totalSeconds = totalSeconds + 1;
     secondsLabel.innerHTML = pad(totalSeconds % 60);
     minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
 }
@@ -103,7 +103,7 @@ function newGame() {
 }
 
 function unFlipAllCards() {
-    var cards = document.querySelectorAll('.is-flipped');
+    let cards = document.querySelectorAll('.is-flipped');
 
     cards.forEach((card) => {
         card.classList.remove('is-flipped');
@@ -111,7 +111,7 @@ function unFlipAllCards() {
 }
 
 function unFlipCardsIfNotMatch() {
-    var cards = document.querySelectorAll('.is-flipped');
+    let cards = document.querySelectorAll('.is-flipped');
 
     cards.forEach((card) => {
         if (card.dataset.match == 'false') {
@@ -153,7 +153,7 @@ function reset() {
 }
 
 function printCardNumber() {
-    var cards = document.querySelectorAll('.card');
+    let cards = document.querySelectorAll('.card');
 
     console.log('===================');
     cards.forEach((card) => {
@@ -165,7 +165,7 @@ function printCardNumber() {
 }
 
 function clearCardNumber() {
-    var cards = document.querySelectorAll('.card');
+    let cards = document.querySelectorAll('.card');
 
     cards.forEach((card) => {
         card.dataset.number = '';
@@ -174,15 +174,15 @@ function clearCardNumber() {
 }
 
 function assignCardNumber() {
-    var cardNumber = 0;
-    var assignCount = 0;
+    let cardNumber = 0;
+    let assignCount = 0;
 
     while (!allCardHasNumber()) {
         cardNumber = cardNumber + 1;
         assignCount = 0;
 
         while (assignCount < 2) {
-            var cardId = Math.floor((Math.random() * cardCount) + 1);
+            let cardId = Math.floor((Math.random() * numberOfCards) + 1);
 
             if (!cardHasNumber(cardId)) {
                 setCardNumber(cardId, cardNumber);
@@ -193,20 +193,20 @@ function assignCardNumber() {
 }
 
 function setCardNumber(cardId, number) {
-    var card = getCard(cardId);
+    let card = getCard(cardId);
     card.dataset.number = number;
 
-    var face = card.querySelector('.card__face--back');
+    let face = card.querySelector('.card-face-back');
     face.innerHTML = number;
 }
 
 function setCardMatch(cardId) {
-    var card = getCard(cardId);
+    let card = getCard(cardId);
     card.dataset.match = 'true';
 }
 
 function allCardHasNumber() {
-    var cards = document.querySelectorAll('.card');
+    let cards = document.querySelectorAll('.card');
 
     for (const card of cards) {
         if (card.dataset.number == '')
@@ -217,7 +217,7 @@ function allCardHasNumber() {
 }
 
 function cardHasNumber(cardId) {
-    var card = getCard(cardId);
+    let card = getCard(cardId);
 
     if (card.dataset.number == '')
         return false
