@@ -216,7 +216,7 @@ function onCardClick(evt, card) {
         }
     }
 
-    cardGame.debugPrint();
+    // cardGame.debugPrint();
 }
 
 function newGame(evt) {
@@ -230,7 +230,7 @@ function newGame(evt) {
     intervalId = setInterval(countDown, 100);
 
     cardGame.start();
-    cardGame.debugPrint();
+    // cardGame.debugPrint();
 }
 
 function countDown() {
