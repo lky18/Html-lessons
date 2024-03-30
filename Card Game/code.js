@@ -42,7 +42,7 @@ class Card {
     setNumber(newNumber) {
         this.number = newNumber;
         let face = this.element.querySelector('.card-face-back');
-        face.innerHTML = newNumber;
+        face.innerHTML = `<span class="card-number">${newNumber}</span>`;
     }
 }
 

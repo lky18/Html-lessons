@@ -84,6 +84,12 @@ body {
     transform: rotateY(180deg);
 }
 
+.card-number {
+    position: absolute;
+    top: -80px;
+    left: 30px;
+}
+
 .new-game-button {
     font-size: 20px;
     width: 150px;
