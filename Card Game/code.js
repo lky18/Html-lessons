@@ -178,11 +178,14 @@ window.onload = function () {
     cardGame.init();
     
     cardGame.cards.forEach((card) => {
-        card.element.addEventListener('click', () => onCardClick(card));
+        card.element.addEventListener('click', (evt) => onCardClick(evt, card));
+        card.element.addEventListener('touchstart', (evt) => onCardClick(evt, card));
     });
 };
 
-function onCardClick(card) {
+function onCardClick(evt, card) {
+    evt.preventDefault();
+
     // do not allow to flip card until the game start
     if (!cardGame.isStarted) {
         return;
@@ -216,7 +219,7 @@ function onCardClick(card) {
     cardGame.debugPrint();
 }
 
-function newGame() {
+function newGame(evt) {
     totalTicks = 0;
 
     if (intervalId) {
