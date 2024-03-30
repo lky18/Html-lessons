@@ -1,9 +1,13 @@
-.container {
-    margin: auto;
-    width: 50%;
+body{
+    background-image: url('background.jpg');
 }
 
-.game-board {
+.container {
+    margin: auto;
+    width: 80%;    
+}
+
+#game-board {
     display: flex;
     gap: 20px;
     flex-direction: row;
@@ -11,7 +15,7 @@
     margin-top: 20px;
 }
 
-.score-board {
+#toolbar {
     display: flex;
 }
 
@@ -85,7 +89,7 @@
     border-radius: 8px;
 }
 
-.count-down {
+#count-down {
     margin-left: 20px;
     display: inline-block;
     font-size: 40px;

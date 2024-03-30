@@ -1,11 +1,10 @@
-document.addEventListener("DOMContentLoaded", ready);
-
 class Card {
     constructor(element) {
         this.element = element;
         this.number = null;
         this.isMatched = false;
         this.isflipped = false;
+        this.timeoutId = null
     }
 
     reset() {
@@ -15,18 +14,29 @@ class Card {
     }
 
     flip() {
-        if (!this.isMatched && !this.isflipped) {
-            // this.isflipped = !this.isflipped;
-            // this.element.classList.toggle('is-flipped');
+        // this.isflipped = !this.isflipped;
+        // this.element.classList.toggle('is-flipped');
 
-            this.isflipped = true;
-            this.element.classList.add('is-flipped');
+        this.isflipped = true;
+        this.element.classList.add('is-flipped');
+
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
         }
     }
 
     unFlip() {
         this.isflipped = false;
         this.element.classList.remove('is-flipped');
+
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
+    }
+
+    unFlipDelay() {
+        this.isflipped = false;
+        this.timeoutId = setTimeout(() => { this.element.classList.remove('is-flipped') }, 500);
     }
 
     setNumber(newNumber) {
@@ -40,7 +50,20 @@ class CardGame {
     constructor(numberOfCards) {
         this.numberOfCards = numberOfCards;
         this.cards = [];
-        this.isStarted = false;
+        this.isStarted = false;       
+    }
+
+    init() {
+        let gameBoard = document.getElementById('game-board');
+
+        for(let i = 0; i < 8; i++) {
+            gameBoard.innerHTML += `<div class="card-wrapper">
+                <div class="card">
+                    <div class="card-face no-select card-face-front"></div>
+                    <div class="card-face no-select card-face-back"></div>
+                </div>
+            </div>`;
+        }
 
         let cardElements = document.querySelectorAll('.card');
 
@@ -57,7 +80,7 @@ class CardGame {
         });
 
         this.isStarted = true;
-        this.assignCardNumber();        
+        this.assignCardNumber();
     }
 
     assignCardNumber() {
@@ -86,26 +109,6 @@ class CardGame {
         }
 
         return true;
-    }
-
-    cardFlipCount() {
-        let count = 0;
-
-        this.cards.forEach((card) => {
-            if (card.isflipped && !card.isMatched) {
-                count++;
-            }
-        });
-
-        return count;
-    }
-
-    unFlipNotMatchedCards() {
-        this.cards.forEach((card) => {
-            if (card.isflipped && !card.isMatched) {
-                card.unFlip();
-            }
-        });
     }
 
     unFlipAllCards() {
@@ -144,16 +147,20 @@ class CardGame {
             }
         });
 
-        // Set both cards matched if teh number are the same
+        // Set both cards to match if the number are the same
         if (card1 && card2 && card1.number == card2.number) {
             card1.isMatched = true;
             card2.isMatched = true;
+        }
+        // Set unflip both cards if the number are the same
+        else if (card1 && card2 && card1.number != card2.number) {
+            card1.unFlipDelay();
+            card2.unFlipDelay();
         }
     }
 
     debugPrint() {
         console.clear();
-        console.log('cardFlipCount', this.cardFlipCount());
         console.log('isStarted', this.isStarted);
         console.log('hasAllCardMatched', this.hasAllCardMatched())
         this.cards.forEach((card) => {
@@ -162,20 +169,22 @@ class CardGame {
     }
 }
 
-const numberOfCards = document.querySelectorAll('.card').length;
-const cardGame = new CardGame(numberOfCards);
-let totalSeconds = 0;
+const numberOfCards = 8
+let cardGame = new CardGame(numberOfCards);
+let totalTicks = 0;
 let intervalId;
 
-function ready() {
+window.onload = function () {
+    cardGame.init();
+    
     cardGame.cards.forEach((card) => {
         card.element.addEventListener('click', () => onCardClick(card));
-    })
-}
+    });
+};
 
 function onCardClick(card) {
     // do not allow to flip card until the game start
-    if (!cardGame.isStarted) {        
+    if (!cardGame.isStarted) {
         return;
     }
 
@@ -187,11 +196,6 @@ function onCardClick(card) {
     // do not allow to flip card if already has been flipped
     if (card.isflipped) {
         return;
-    }
-
-    // Check every third flip if card not matched
-    if (cardGame.cardFlipCount() > 1) {
-        cardGame.unFlipNotMatchedCards();
     }
 
     // flip the card
@@ -213,25 +217,41 @@ function onCardClick(card) {
 }
 
 function newGame() {
-    totalSeconds = 0;
+    totalTicks = 0;
 
     if (intervalId) {
         clearInterval(intervalId);
+        resetCountDown();
     }
 
-    intervalId = setInterval(setTime, 1000);
+    intervalId = setInterval(countDown, 100);
 
     cardGame.start();
     cardGame.debugPrint();
 }
 
-function setTime() {
+function countDown() {
     let minutesLabel = document.getElementById("minutes");
     let secondsLabel = document.getElementById("seconds");
+    let ticksLabel = document.getElementById("ticks");
 
-    totalSeconds = totalSeconds + 1;
-    secondsLabel.innerHTML = pad(totalSeconds % 60);
-    minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+    totalTicks = totalTicks + 1;
+    if (totalTicks % 10 == 0) {
+        secondsLabel.innerHTML = pad((totalTicks / 10) % 60);
+        minutesLabel.innerHTML = pad(parseInt((totalTicks / 10) / 60));
+    }
+
+    ticksLabel.innerHTML = pad(totalTicks);
+}
+
+function resetCountDown() {
+    let minutesLabel = document.getElementById("minutes");
+    let secondsLabel = document.getElementById("seconds");
+    let ticksLabel = document.getElementById("ticks");
+
+    secondsLabel.innerHTML = '00';
+    minutesLabel.innerHTML = '00';
+    ticksLabel.innerHTML = '00';
 }
 
 function pad(val) {
