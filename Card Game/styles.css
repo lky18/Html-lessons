@@ -1,5 +1,6 @@
 body {
     background-image: url('background.jpg');
+    font-family: Serif, Sans-Serif, Monospace;
 }
 
 .container {
@@ -90,16 +91,19 @@ body {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 20px;
-    background-color: brown;
-    color: white;
+    gap: 15px;
+    background-color: #F5F5F5; /* #E45E62;*/
+    color: black;
     padding: 8px;
     border-radius: 8px;
 }
 
-button {
+#leader-board-button, #start-game-button {
     font-size: 20px;
     border-radius: 8px;
+    background-color: #123b87;
+    border: 0px solid #324976;
+    color: #ffffff;
     padding: 10px;
 }
 
@@ -107,8 +111,7 @@ button {
     font-size: 30px;
 }
 
-#name,
-#name-input {
+#player {
     font-size: 30px;
     border-radius: 8px;
 }
@@ -123,7 +126,7 @@ button {
     height: 95%;
     width: 95%;
     border-radius: 10px;
-    padding: 10px;
+    padding: 20px;
     visibility: hidden;
 }
 
@@ -132,16 +135,29 @@ button {
     align-items: center;
 }
 
-#leader-board-table {
+#leader-board-table-wrapper {
     margin-top: 20px;
     width: 100%;
+    height: 90%;
+    overflow: auto;
+}
+
+#leader-board-table {
+    width: 100%;
+    border-spacing: 0;
     border-collapse: collapse;
+}
+
+#leader-board-table th  {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
 }
 
 #leader-board-table,
 #leader-board-table td,
 #leader-board-table th {
-    border: 3px solid #ddd;
+    border: 1px solid #ddd;
     text-align: left;
     font-size: 25px;
 }
@@ -149,6 +165,10 @@ button {
 #leader-board-table th,
 #leader-board-table td {
     padding: 15px;
+}
+
+#leader-board-table tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
 
 #leader-board-title {
@@ -159,4 +179,6 @@ button {
 
 #leader-board-close-button {
     margin-left: auto;
+    border: none;
+    background-color: transparent;
 }

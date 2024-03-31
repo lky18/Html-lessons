@@ -4,24 +4,21 @@
     <title>
         Card Game
     </title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles.css">
 </header>
 
 <body>
     <div class="container">
         <div id="toolbar">
-            <button id="start-game-button" onclick="startGame(event)" ontouchstart="startGame(event)">Start</button>
+            <button id="leader-board-button" class="no-select" onclick="showLeaderBoard(event)" ontouchstart="showLeaderBoard(event)">Leader board</button>
+            <button id="start-game-button" class="no-select" onclick="startGame(event)" ontouchstart="startGame(event)">Start</button>
+            <label id="player" class="no-select" onclick="promptPlayerNameEnter(event)" ontouchstart="promptPlayerNameEnter(event)"></label>
             <div id="count-down">
                 <label id="minutes" class="no-select">00</label><span class="no-select">:</span><label id="seconds"
                     class="no-select">00</label><span class="no-select">.</span><label id="ticks"
                     class="no-select">00</label>
-            </div>
-            <div>
-                <label id="name">Player:</label>
-                <input type="text" id="name-input">
-            </div>
-            <button id="leader-board-button" onclick="showLeaderBoard(event)" ontouchstart="showLeaderBoard(event)">Leader board</button>
+            </div>            
         </div>
 
         <div id="game-board">
@@ -30,7 +27,7 @@
 
     <div id="leader-board">
         <div id="leader-board-toolbar">
-            <span id="leader-board-title">Top 20 leader board</span>
+            <span id="leader-board-title">Top 20 Leader board</span>
             <button id="leader-board-close-button" onclick="closeLeaderBoard(event)" ontouchstart="closeLeaderBoard(event)">X</button>
         </div>
         <div id="leader-board-table-wrapper">            

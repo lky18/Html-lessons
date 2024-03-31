@@ -278,21 +278,38 @@ const numberOfCards = 8;
 const cardGame = new CardGame(numberOfCards);
 const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/f0c0ab30-1a01-42a5-b146-361e7a6045de';
 const apiKey= '8969a471-87b7-4758-9f34-b090d396d9bb';
+let playerName = '';
 
 window.onload = function () {
     cardGame.init();
-
-    const random_uuid = uuidv4();
-    let name = document.getElementById('name-input');
-
-    name.value = random_uuid;
 };
 
 function startGame(evt) {
     evt.preventDefault();
 
-    let name = document.getElementById('name-input');
-    cardGame.start(name.value);
+    if (playerName == '') {
+        enterPlayerName();
+    }
+
+    cardGame.start(playerName);
+}
+
+function promptPlayerNameEnter(evt) {
+    evt.preventDefault();
+
+    enterPlayerName();
+    cardGame.start(playerName);
+}
+
+function enterPlayerName() {
+    playerName = prompt("Please enter your name", '');
+
+    if (playerName == '' || playerName == null) {
+        playerName = uuidv4();
+    }
+
+    const player = document.getElementById('player');
+    player.innerHTML = `${playerName}`;
 }
 
 function showLeaderBoard(evt) {
@@ -339,7 +356,7 @@ async function updateScore(newScores) {
         body: JSON.stringify({ scores: newScores }),
     };
 
-    fetch(`${apiUrl}?apiKey=${apiKey}`, requestOptions);
+    const response = await fetch(`${apiUrl}?apiKey=${apiKey}`, requestOptions);
 
     if (!response) {
         throw new Error('Network response was not ok');
