@@ -143,6 +143,7 @@ button {
 #leader-board-table th {
     border: 3px solid #ddd;
     text-align: left;
+    font-size: 25px;
 }
 
 #leader-board-table th,
