@@ -17,6 +17,11 @@ class Card {
         // this.isflipped = !this.isflipped;
         // this.element.classList.toggle('is-flipped');
 
+        if (this.isflipped) {
+            this.unFlip();
+            return;
+        }
+
         this.isflipped = true;
         this.element.classList.add('is-flipped');
 
@@ -196,11 +201,6 @@ function onCardClick(evt, card) {
         return;
     }
 
-    // do not allow to flip card if already has been flipped
-    if (card.isflipped) {
-        return;
-    }
-
     // flip the card
     card.flip();
 
@@ -216,7 +216,7 @@ function onCardClick(evt, card) {
         }
     }
 
-    // cardGame.debugPrint();
+    cardGame.debugPrint();
 }
 
 function newGame(evt) {
