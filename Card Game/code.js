@@ -55,13 +55,15 @@ class CardGame {
     constructor(numberOfCards) {
         this.numberOfCards = numberOfCards;
         this.cards = [];
-        this.isStarted = false;       
+        this.isStarted = false;
+        this.totalTicks = 0;
+        this.intervalId;
     }
 
     init() {
         let gameBoard = document.getElementById('game-board');
 
-        for(let i = 0; i < 8; i++) {
+        for (let i = 0; i < 8; i++) {
             gameBoard.innerHTML += `<div class="card-wrapper">
                 <div class="card">
                     <div class="card-face no-select card-face-front"></div>
@@ -74,8 +76,42 @@ class CardGame {
 
         cardElements.forEach((cardElement) => {
             const card = new Card(cardElement)
+            card.element.addEventListener('click', (evt) => { this.onCardClick(evt, card) });
+            card.element.addEventListener('touchstart', (evt) => { this.onCardClick(evt, card) });
+
             this.cards.push(card);
         });
+    }
+
+    onCardClick(evt, card) {
+        evt.preventDefault();
+
+        // do not allow to flip card until the game start
+        if (!this.isStarted) {
+            return;
+        }
+
+        // do not allow to flip card is already matched
+        if (card.isMatched) {
+            return;
+        }
+
+        // flip the card
+        card.flip();
+
+        // check matching status again after the card has been flipped
+        this.checkCardMatchingStatus();
+
+        // do not allow to flip card if all card have been matched
+        if (this.hasAllCardMatched()) {
+            this.isStarted = false;
+
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+            }
+        }
+
+        this.debugPrint();
     }
 
     start() {
@@ -86,6 +122,49 @@ class CardGame {
 
         this.isStarted = true;
         this.assignCardNumber();
+
+        this.totalTicks = 0;
+
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.resetCountDown();
+        }
+
+        this.intervalId = setInterval(() => { this.countDown(); }, 100);
+    }
+
+    countDown() {
+        let minutesLabel = document.getElementById("minutes");
+        let secondsLabel = document.getElementById("seconds");
+        let ticksLabel = document.getElementById("ticks");
+
+        this.totalTicks = this.totalTicks + 1;
+        if (this.totalTicks % 10 == 0) {
+            secondsLabel.innerHTML = this.pad((this.totalTicks / 10) % 60);
+            minutesLabel.innerHTML = this.pad(parseInt((this.totalTicks / 10) / 60));
+        }
+
+        ticksLabel.innerHTML = this.pad(this.totalTicks);
+    }
+
+    resetCountDown() {
+        let minutesLabel = document.getElementById("minutes");
+        let secondsLabel = document.getElementById("seconds");
+        let ticksLabel = document.getElementById("ticks");
+
+        secondsLabel.innerHTML = '00';
+        minutesLabel.innerHTML = '00';
+        ticksLabel.innerHTML = '00';
+    }
+
+    pad(val) {
+        let valString = val + "";
+
+        if (valString.length < 2) {
+            return "0" + valString;
+        } else {
+            return valString;
+        }
     }
 
     assignCardNumber() {
@@ -175,94 +254,15 @@ class CardGame {
 }
 
 const numberOfCards = 8
-let cardGame = new CardGame(numberOfCards);
-let totalTicks = 0;
-let intervalId;
+const cardGame = new CardGame(numberOfCards);
 
 window.onload = function () {
     cardGame.init();
-    
-    cardGame.cards.forEach((card) => {
-        card.element.addEventListener('click', (evt) => onCardClick(evt, card));
-        card.element.addEventListener('touchstart', (evt) => onCardClick(evt, card));
-    });
 };
 
-function onCardClick(evt, card) {
+function startGame(evt) {
     evt.preventDefault();
-
-    // do not allow to flip card until the game start
-    if (!cardGame.isStarted) {
-        return;
-    }
-
-    // do not allow to flip card is already matched
-    if (card.isMatched) {
-        return;
-    }
-
-    // flip the card
-    card.flip();
-
-    // check matching status again after the card has been flipped
-    cardGame.checkCardMatchingStatus();
-
-    // do not allow to flip card if all card have been matched
-    if (cardGame.hasAllCardMatched()) {
-        cardGame.isStarted = false;
-
-        if (intervalId) {
-            clearInterval(intervalId);
-        }
-    }
-
-    cardGame.debugPrint();
-}
-
-function newGame(evt) {
-    totalTicks = 0;
-
-    if (intervalId) {
-        clearInterval(intervalId);
-        resetCountDown();
-    }
-
-    intervalId = setInterval(countDown, 100);
-
+    
     cardGame.start();
-    // cardGame.debugPrint();
-}
-
-function countDown() {
-    let minutesLabel = document.getElementById("minutes");
-    let secondsLabel = document.getElementById("seconds");
-    let ticksLabel = document.getElementById("ticks");
-
-    totalTicks = totalTicks + 1;
-    if (totalTicks % 10 == 0) {
-        secondsLabel.innerHTML = pad((totalTicks / 10) % 60);
-        minutesLabel.innerHTML = pad(parseInt((totalTicks / 10) / 60));
-    }
-
-    ticksLabel.innerHTML = pad(totalTicks);
-}
-
-function resetCountDown() {
-    let minutesLabel = document.getElementById("minutes");
-    let secondsLabel = document.getElementById("seconds");
-    let ticksLabel = document.getElementById("ticks");
-
-    secondsLabel.innerHTML = '00';
-    minutesLabel.innerHTML = '00';
-    ticksLabel.innerHTML = '00';
-}
-
-function pad(val) {
-    let valString = val + "";
-
-    if (valString.length < 2) {
-        return "0" + valString;
-    } else {
-        return valString;
-    }
+    cardGame.debugPrint();
 }
