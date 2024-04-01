@@ -99,7 +99,6 @@ class CardGame {
         this.cards = [];
         this.isStarted = false;
         this.totalTicks = 0;
-        this.intervalId = null;
 
         let gameBoard = document.getElementById('game-board');
         gameBoard.innerHTML = '';
@@ -282,10 +281,8 @@ class CardGame {
         getScores().then(data => {
             if (this.checkIsInTop20(data, ticks)) {
                 const name = this.promptToEnterName();
-                let newScore = new Score(name, ticks);
-                const leaderBoard = new LeaderBoard(data.scores8, data.score12, data.score16);
-
-                // let newScores = data;
+                const newScore = new Score(name, ticks);
+                const leaderBoard = new LeaderBoard(data.scores8, data.scores12, data.scores16);
 
                 if (this.numberOfCards == 8) {
                     leaderBoard.scores8.push(newScore);
@@ -413,6 +410,18 @@ function onCardNumberSelect(numberOfCards) {
 function onShowLeaderBoard(evt) {
     evt.preventDefault();
 
+    let leaderBoardTitle = document.getElementById('leader-board-title');
+
+    if (cardGame.numberOfCards == 8) {
+        leaderBoardTitle.innerHTML = '8 cards leader board';
+    }
+    else if (cardGame.numberOfCards == 12) {
+        leaderBoardTitle.innerHTML = '12 cards leader board';
+    }
+    else if (cardGame.numberOfCards == 16) {
+        leaderBoardTitle.innerHTML = '16 cards leader board';
+    }
+
     let leaderBoard = document.getElementById('leader-board');
 
     if (leaderBoard.style.visibility == 'visible') {
@@ -425,32 +434,47 @@ function onShowLeaderBoard(evt) {
     getScores().then(data => {
         let count = 0;
 
-        if (cardGame.numberOfCards == 8 && data.scores8) {
-            document.getElementById('leader-board-table-wrapper').innerHTML = [
-                '<table id="leader-board-table"><thead>',
-                // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
-                '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
-                '</thead><tbody>',
-                ...data.scores8.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
-                '</tbody></table>'].join("");
+        if (cardGame.numberOfCards == 8) {
+            if (data.scores8 === undefined || data.scores8.length == 0) {
+                document.getElementById('leader-board-table-wrapper').innerHTML = ''
+            }
+            else {
+                document.getElementById('leader-board-table-wrapper').innerHTML = [
+                    '<table id="leader-board-table"><thead>',
+                    // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
+                    '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
+                    '</thead><tbody>',
+                    ...data.scores8.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
+                    '</tbody></table>'].join("");
+            }
         }
         else if (cardGame.numberOfCards == 12 && data.scores12) {
-            document.getElementById('leader-board-table-wrapper').innerHTML = [
-                '<table id="leader-board-table"><thead>',
-                // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
-                '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
-                '</thead><tbody>',
-                ...data.scores12.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
-                '</tbody></table>'].join("");
+            if (data.scores12 === undefined || data.scores12.length == 0) {
+                document.getElementById('leader-board-table-wrapper').innerHTML = ''
+            }
+            else {
+                document.getElementById('leader-board-table-wrapper').innerHTML = [
+                    '<table id="leader-board-table"><thead>',
+                    // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
+                    '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
+                    '</thead><tbody>',
+                    ...data.scores12.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
+                    '</tbody></table>'].join("");
+            }
         }
         else if (cardGame.numberOfCards == 16 && data.scores16) {
-            document.getElementById('leader-board-table-wrapper').innerHTML = [
-                '<table id="leader-board-table"><thead>',
-                // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
-                '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
-                '</thead><tbody>',
-                ...data.scores16.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
-                '</tbody></table>'].join("");
+            if (data.scores16 === undefined || data.scores16.length == 0) {
+                document.getElementById('leader-board-table-wrapper').innerHTML = ''
+            }
+            else {
+                document.getElementById('leader-board-table-wrapper').innerHTML = [
+                    '<table id="leader-board-table"><thead>',
+                    // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
+                    '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
+                    '</thead><tbody>',
+                    ...data.scores16.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
+                    '</tbody></table>'].join("");
+            }
         }
     });
 }
