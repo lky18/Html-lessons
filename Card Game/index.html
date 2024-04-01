@@ -11,8 +11,13 @@
 <body>
     <div class="container">
         <div id="toolbar">
-            <button id="leader-board-button" class="no-select" onclick="showLeaderBoard(event)" ontouchstart="showLeaderBoard(event)">Leader board</button>
-            <button id="start-game-button" class="no-select" onclick="startGame(event)" ontouchstart="startGame(event)">Start</button>
+            <button id="leader-board-button" class="no-select" onclick="onShowLeaderBoard(event)" ontouchstart="onShowLeaderBoard(event)">Leader board</button>
+            <select id="card-number-select" onchange="onCardNumberSelect(this.value)">
+                <option value="8">8 cards</option>
+                <option value="12">12 cards</option>
+                <option value="16">16 cards</option>
+              </select>
+            <button id="start-game-button" class="no-select" onclick="onStartGame(event)" ontouchstart="onStartGame(event)">Start</button>
             <div id="count-down">
                 <label id="minutes" class="no-select">00</label><span class="no-select">:</span><label id="seconds"
                     class="no-select">00</label><span class="no-select">.</span><label id="ticks"
@@ -27,7 +32,7 @@
     <div id="leader-board">
         <div id="leader-board-toolbar">
             <span id="leader-board-title">Leader board</span>
-            <button id="leader-board-close-button" onclick="closeLeaderBoard(event)" ontouchstart="closeLeaderBoard(event)">X</button>
+            <button id="leader-board-close-button" onclick="onCloseLeaderBoard(event)" ontouchstart="onCloseLeaderBoard(event)">X</button>
         </div>
         <div id="leader-board-table-wrapper">            
         </div>

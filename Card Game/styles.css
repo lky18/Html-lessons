@@ -99,7 +99,8 @@ body {
 }
 
 #leader-board-button,
-#start-game-button {
+#start-game-button,
+#card-number-select {
     font-size: 1.5rem;
     border-radius: 8px;
     background-color: #123b87;

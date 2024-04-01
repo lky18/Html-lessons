@@ -1,7 +1,34 @@
+class LeaderBoard {
+    constructor(scores8, scores12, scores16) {
+
+        if (scores8) {
+            this.scores8 = scores8;
+        }
+        else {
+            this.scores8 = [];
+        }
+
+        if (scores12) {
+            this.scores12 = scores12;
+        }
+        else {
+            this.scores12 = [];
+        }
+
+        if (scores16) {
+            this.scores16 = scores16;
+        }
+        else {
+            this.scores16 = [];
+        }
+    }
+}
+
 class Score {
     constructor(name, ticks) {
         this.name = name;
         this.ticks = ticks;
+        this.playAt = new Date();
     }
 }
 
@@ -59,16 +86,23 @@ class Card {
 }
 
 class CardGame {
-    constructor(numberOfCards) {
+    constructor() {
+        this.numberOfCards = 0;
+        this.cards = [];
+        this.isStarted = false;
+        this.totalTicks = 0;
+        this.intervalId = null;
+    }
+
+    init(numberOfCards) {
         this.numberOfCards = numberOfCards;
         this.cards = [];
         this.isStarted = false;
         this.totalTicks = 0;
-        this.intervalId;
-    }
+        this.intervalId = null;
 
-    init() {
         let gameBoard = document.getElementById('game-board');
+        gameBoard.innerHTML = '';
 
         for (let i = 0; i < this.numberOfCards; i++) {
             gameBoard.innerHTML += `<div class="card-wrapper">
@@ -88,6 +122,27 @@ class CardGame {
 
             this.cards.push(card);
         });
+    }
+
+    start() {
+        this.unFlipAllCards();
+        this.cards.forEach((card) => {
+            card.reset();
+        });
+
+        this.isStarted = true;
+        this.assignCardNumber();
+
+        this.totalTicks = 0;
+
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.resetCountDown();
+        }
+
+        this.intervalId = setInterval(() => { this.countDown(); }, 100);
+
+        this.debugPrint();
     }
 
     onCardClick(evt, card) {
@@ -119,27 +174,6 @@ class CardGame {
 
             this.updateLeaderBoard(this.totalTicks);
         }
-
-        this.debugPrint();
-    }
-
-    start() {
-        this.unFlipAllCards();
-        this.cards.forEach((card) => {
-            card.reset();
-        });
-
-        this.isStarted = true;
-        this.assignCardNumber();
-
-        this.totalTicks = 0;
-
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-            this.resetCountDown();
-        }
-
-        this.intervalId = setInterval(() => { this.countDown(); }, 100);
 
         this.debugPrint();
     }
@@ -246,19 +280,42 @@ class CardGame {
 
     updateLeaderBoard(ticks) {
         getScores().then(data => {
-            if (this.checkIsInTop20(data.scores, ticks)) {
+            if (this.checkIsInTop20(data, ticks)) {
                 const name = this.promptToEnterName();
-
                 let newScore = new Score(name, ticks);
-                data.scores.push(newScore);
+                const leaderBoard = new LeaderBoard(data.scores8, data.score12, data.score16);
 
-                // sort scores
-                data.scores.sort((first, second) => first.ticks - second.ticks);
+                // let newScores = data;
 
-                // get the first 20 highest scores
-                const newScores = data.scores.slice(0, 20);
+                if (this.numberOfCards == 8) {
+                    leaderBoard.scores8.push(newScore);
 
-                updateScore(newScores).then(data => {
+                    // sort scores
+                    leaderBoard.scores8.sort((first, second) => first.ticks - second.ticks);
+
+                    // get the first 20 highest scores
+                    leaderBoard.scores8 = leaderBoard.scores8.slice(0, 20);
+                }
+                else if (this.numberOfCards == 12) {
+                    leaderBoard.scores12.push(newScore);
+
+                    // sort scores
+                    leaderBoard.scores12.sort((first, second) => first.ticks - second.ticks);
+
+                    // get the first 20 highest scores
+                    leaderBoard.scores12 = leaderBoard.scores12.slice(0, 20);
+                }
+                else if (this.numberOfCards == 16) {
+                    leaderBoard.scores16.push(newScore);
+
+                    // sort scores
+                    leaderBoard.scores16.sort((first, second) => first.ticks - second.ticks);
+
+                    // get the first 20 highest scores
+                    leaderBoard.scores16 = leaderBoard.scores16.slice(0, 20);
+                }
+
+                updateScore(leaderBoard).then(data => {
                 });
             }
         });
@@ -274,10 +331,42 @@ class CardGame {
         return name;
     }
 
-    checkIsInTop20(scores, newTicks) {
-        for (const score of scores) {
-            if (newTicks < score.ticks)
+    checkIsInTop20(data, newTicks) {
+        if (this.numberOfCards == 8) {
+            if (data.scores8 === undefined || data.scores8.length < 20) {
                 return true;
+            } else {
+                for (const score of data.scores8) {
+                    if (newTicks < score.ticks)
+                        return true;
+                }
+
+                return false;
+            }
+        }
+        else if (this.numberOfCards == 12) {
+            if (data.scores12 === undefined || data.scores12.length < 20) {
+                return true;
+            } else {
+                for (const score of data.scores12) {
+                    if (newTicks < score.ticks)
+                        return true;
+                }
+
+                return false;
+            }
+        }
+        else if (this.numberOfCards == 16) {
+            if (data.scores16 === undefined || data.scores16.length < 20) {
+                return true;
+            } else {
+                for (const score of data.scores16) {
+                    if (newTicks < score.ticks)
+                        return true;
+                }
+
+                return false;
+            }
         }
 
         return false;
@@ -302,21 +391,26 @@ class CardGame {
     }
 }
 
-const numberOfCards = 8;
-const cardGame = new CardGame(numberOfCards);
+const defaultNumberOfCards = 8;
+const cardGame = new CardGame();
 const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/f0c0ab30-1a01-42a5-b146-361e7a6045de';
 const apiKey = '8969a471-87b7-4758-9f34-b090d396d9bb';
 
 window.onload = function () {
-    cardGame.init();
+    cardGame.init(defaultNumberOfCards);
 };
 
-function startGame(evt) {
+function onStartGame(evt) {
     evt.preventDefault();
     cardGame.start();
 }
 
-function showLeaderBoard(evt) {
+function onCardNumberSelect(numberOfCards) {
+    cardGame.init(numberOfCards);
+    cardGame.start();
+}
+
+function onShowLeaderBoard(evt) {
     evt.preventDefault();
 
     let leaderBoard = document.getElementById('leader-board');
@@ -330,14 +424,42 @@ function showLeaderBoard(evt) {
 
     getScores().then(data => {
         let count = 0;
-        document.getElementById('leader-board-table-wrapper').innerHTML = [
-            '<table id="leader-board-table"><thead>',
-            // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
-            '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th>',
-            '</thead><tbody>',
-            ...data.scores.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertToMinutesSeconds(item.ticks)}</td></tr>` }),
-            '</tbody></table>'].join("");
+
+        if (cardGame.numberOfCards == 8 && data.scores8) {
+            document.getElementById('leader-board-table-wrapper').innerHTML = [
+                '<table id="leader-board-table"><thead>',
+                // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
+                '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
+                '</thead><tbody>',
+                ...data.scores8.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
+                '</tbody></table>'].join("");
+        }
+        else if (cardGame.numberOfCards == 12 && data.scores12) {
+            document.getElementById('leader-board-table-wrapper').innerHTML = [
+                '<table id="leader-board-table"><thead>',
+                // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
+                '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
+                '</thead><tbody>',
+                ...data.scores12.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
+                '</tbody></table>'].join("");
+        }
+        else if (cardGame.numberOfCards == 16 && data.scores16) {
+            document.getElementById('leader-board-table-wrapper').innerHTML = [
+                '<table id="leader-board-table"><thead>',
+                // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
+                '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
+                '</thead><tbody>',
+                ...data.scores16.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertTicksToMinutesSeconds(item.ticks)}</td><td>${convertToLocaleString(item.playAt)}</td></tr>` }),
+                '</tbody></table>'].join("");
+        }
     });
+}
+
+function onCloseLeaderBoard(evt) {
+    evt.preventDefault();
+
+    let leaderBoard = document.getElementById('leader-board');
+    leaderBoard.style.visibility = 'hidden';
 }
 
 async function getScores() {
@@ -358,7 +480,7 @@ async function updateScore(newScores) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ scores: newScores }),
+        body: JSON.stringify(newScores),
     };
 
     const response = await fetch(`${apiUrl}?apiKey=${apiKey}`, requestOptions);
@@ -372,13 +494,20 @@ async function updateScore(newScores) {
     return data;
 }
 
-function convertToMinutesSeconds(ticks) {
+function convertTicksToMinutesSeconds(ticks) {
     const totalSeconds = (ticks / 10);
     let minutes = Math.floor(totalSeconds / 60);
     const seconds = Math.floor(totalSeconds - (minutes * 60));
 
     return `${pad(minutes)}:${pad(seconds)}`;
 }
+
+function convertToLocaleString(playAt) {
+    const d = new Date(playAt);
+
+    return d.toLocaleString();
+}
+
 
 function pad(val) {
     let valString = val + "";
@@ -390,9 +519,4 @@ function pad(val) {
     }
 }
 
-function closeLeaderBoard(evt) {
-    evt.preventDefault();
 
-    let leaderBoard = document.getElementById('leader-board');
-    leaderBoard.style.visibility = 'hidden';
-}
