@@ -306,7 +306,6 @@ const numberOfCards = 8;
 const cardGame = new CardGame(numberOfCards);
 const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/f0c0ab30-1a01-42a5-b146-361e7a6045de';
 const apiKey = '8969a471-87b7-4758-9f34-b090d396d9bb';
-let playerName = '';
 
 window.onload = function () {
     cardGame.init();
@@ -314,7 +313,7 @@ window.onload = function () {
 
 function startGame(evt) {
     evt.preventDefault();
-    cardGame.start(playerName);
+    cardGame.start();
 }
 
 function showLeaderBoard(evt) {
