@@ -1,10 +1,11 @@
 body {
     background-image: url('background.jpg');
+    background-repeat: no-repeat;
     font-family: Serif, Sans-Serif, Monospace;
 }
 
 .container {
-    margin-top: 50px;
+    margin-top: 1.5rem;
     margin-left: auto;
     margin-right: auto;
     width: 80%;
@@ -12,10 +13,10 @@ body {
 
 #game-board {
     display: flex;
-    gap: 20px;
+    gap: 2rem;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 1.5rem;
 }
 
 .card-wrapper {
@@ -47,7 +48,7 @@ body {
     color: black;
     text-align: center;
     font-weight: bold;
-    font-size: 60px;
+    font-size: 3.5rem;
     backface-visibility: hidden;
 }
 
@@ -92,14 +93,14 @@ body {
     flex-wrap: wrap;
     align-items: center;
     gap: 15px;
-    background-color: #F5F5F5; /* #E45E62;*/
-    color: black;
+    background-color: transparent;
     padding: 8px;
     border-radius: 8px;
 }
 
-#leader-board-button, #start-game-button {
-    font-size: 20px;
+#leader-board-button,
+#start-game-button {
+    font-size: 1.5rem;
     border-radius: 8px;
     background-color: #123b87;
     border: 0px solid #324976;
@@ -107,13 +108,10 @@ body {
     padding: 10px;
 }
 
-#count-down {
-    font-size: 30px;
-}
-
-#player {
-    font-size: 30px;
-    border-radius: 8px;
+#count-down, #player {
+    font-size: 3rem;
+    font-weight: 800;
+    color: grey;
 }
 
 #leader-board {
@@ -148,7 +146,7 @@ body {
     border-collapse: collapse;
 }
 
-#leader-board-table th  {
+#leader-board-table th {
     background-color: #f2f2f2;
     position: sticky;
     top: 0;
@@ -157,14 +155,13 @@ body {
 #leader-board-table,
 #leader-board-table td,
 #leader-board-table th {
-    border: 1px solid #ddd;
     text-align: left;
-    font-size: 25px;
+    font-size: 1.5rem;
 }
 
 #leader-board-table th,
 #leader-board-table td {
-    padding: 15px;
+    padding: 1rem;
 }
 
 #leader-board-table tr:nth-child(even) {
@@ -173,7 +170,7 @@ body {
 
 #leader-board-title {
     margin-right: auto;
-    font-size: 30px;
+    font-size: 2rem;
     font-weight: bold;
 }
 
@@ -181,4 +178,5 @@ body {
     margin-left: auto;
     border: none;
     background-color: transparent;
+    font-size: 1.8rem;
 }
