@@ -108,7 +108,7 @@ body {
     padding: 10px;
 }
 
-#count-down, #player {
+#count-down {
     font-size: 3rem;
     font-weight: 800;
     color: grey;

@@ -4,7 +4,7 @@ POST https://api.jsonstorage.net/v1/json?apiKey=8969a471-87b7-4758-9f34-b090d396
 content-type: application/json
 
 {
-    "player": "apple",
+    "name": "apple",
     "score": 10
 }
 
@@ -20,12 +20,8 @@ content-type: application/json
 {
     "scores": [
         {
-            "player": "orange",
+            "name": "apple",
             "ticks": 4000
-        },
-        {
-            "player": "apple",
-            "ticks": 10
         }
     ]
 }
@@ -36,6 +32,6 @@ PATCH https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/f
 content-type: application/json
 
 {
-    "player": "apple",
+    "name": "apple",
     "score": 10
 }

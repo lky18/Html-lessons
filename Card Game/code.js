@@ -1,6 +1,6 @@
 class Score {
-    constructor(player, ticks) {
-        this.player = player;
+    constructor(name, ticks) {
+        this.name = name;
         this.ticks = ticks;
     }
 }
@@ -65,7 +65,6 @@ class CardGame {
         this.isStarted = false;
         this.totalTicks = 0;
         this.intervalId;
-        this.player = '';
     }
 
     init() {
@@ -118,15 +117,13 @@ class CardGame {
                 clearInterval(this.intervalId);
             }
 
-            this.updateLeaderBoard(this.player, this.totalTicks);
+            this.updateLeaderBoard(this.totalTicks);
         }
 
         this.debugPrint();
     }
 
-    start(player) {
-        this.player = player;
-
+    start() {
         this.unFlipAllCards();
         this.cards.forEach((card) => {
             card.reset();
@@ -247,27 +244,58 @@ class CardGame {
         }
     }
 
-    updateLeaderBoard(player, ticks) {
+    updateLeaderBoard(ticks) {
         getScores().then(data => {
-            let newScore = new Score(player, ticks);
-            data.scores.push(newScore);
+            if (this.checkIsInTop20(data.scores, ticks)) {
+                const name = this.promptToEnterName();
 
-            // sort scores
-            data.scores.sort((first, second) => first.ticks - second.ticks);
+                let newScore = new Score(name, ticks);
+                data.scores.push(newScore);
 
-            // get the first 20 highest scores
-            const newScores = data.scores.slice(0, 20);
+                // sort scores
+                data.scores.sort((first, second) => first.ticks - second.ticks);
 
-            updateScore(newScores).then(data => {
-            });
+                // get the first 20 highest scores
+                const newScores = data.scores.slice(0, 20);
+
+                updateScore(newScores).then(data => {
+                });
+            }
         });
+    }
+
+    promptToEnterName() {
+        let name = prompt("Enter your name to join the leaderboard", '');
+
+        if (name.trim() == '' || name == null) {
+            name = uuidv4();
+        }
+
+        return name;
+    }
+
+    checkIsInTop20(scores, newTicks) {
+        for (const score of scores) {
+            if (newTicks < score.ticks)
+                return true;
+        }
+
+        return false;
+    }
+
+    uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+            .replace(/[xy]/g, function (c) {
+                const r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
     }
 
     debugPrint() {
         console.clear();
         console.log('isStarted', this.isStarted);
         console.log('hasAllCardMatched', this.hasAllCardMatched());
-        console.log('player', this.player);
         this.cards.forEach((card) => {
             console.log(card);
         });
@@ -277,7 +305,7 @@ class CardGame {
 const numberOfCards = 8;
 const cardGame = new CardGame(numberOfCards);
 const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/f0c0ab30-1a01-42a5-b146-361e7a6045de';
-const apiKey= '8969a471-87b7-4758-9f34-b090d396d9bb';
+const apiKey = '8969a471-87b7-4758-9f34-b090d396d9bb';
 let playerName = '';
 
 window.onload = function () {
@@ -286,30 +314,7 @@ window.onload = function () {
 
 function startGame(evt) {
     evt.preventDefault();
-
-    if (playerName == '') {
-        enterPlayerName();
-    }
-
     cardGame.start(playerName);
-}
-
-function promptPlayerNameEnter(evt) {
-    evt.preventDefault();
-
-    enterPlayerName();
-    cardGame.start(playerName);
-}
-
-function enterPlayerName() {
-    playerName = prompt("Please enter your name", '');
-
-    if (playerName == '' || playerName == null) {
-        playerName = uuidv4();
-    }
-
-    const player = document.getElementById('player');
-    player.innerHTML = `${playerName}`;
 }
 
 function showLeaderBoard(evt) {
@@ -325,12 +330,13 @@ function showLeaderBoard(evt) {
     }
 
     getScores().then(data => {
+        let count = 0;
         document.getElementById('leader-board-table-wrapper').innerHTML = [
             '<table id="leader-board-table"><thead>',
             // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
-            '<th>Player</th><th>Time (minutes:seconds)</th>',
+            '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th>',
             '</thead><tbody>',
-            ...data.scores.map(item => `<tr><td>${item.player}</td><td>${convertToMinutesSeconds(item.ticks)}</td></tr>`),
+            ...data.scores.map(item => { return `<tr><td>${++count}</td><td>${item.name}</td><td>${convertToMinutesSeconds(item.ticks)}</td></tr>` }),
             '</tbody></table>'].join("");
     });
 }
@@ -390,13 +396,4 @@ function closeLeaderBoard(evt) {
 
     let leaderBoard = document.getElementById('leader-board');
     leaderBoard.style.visibility = 'hidden';
-}
-
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-        .replace(/[xy]/g, function (c) {
-            const r = Math.random() * 16 | 0,
-                v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
 }
