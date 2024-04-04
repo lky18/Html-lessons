@@ -390,8 +390,8 @@ class CardGame {
 
 const defaultNumberOfCards = 8;
 const cardGame = new CardGame();
-const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/f0c0ab30-1a01-42a5-b146-361e7a6045de';
-const apiKey = '8969a471-87b7-4758-9f34-b090d396d9bb';
+const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/72b1d0c8-64d1-49de-bc52-a8f29caf3faf';
+const apiKey = '6b8ac90e-9382-4a0c-b076-7e413d425d46'; //'8969a471-87b7-4758-9f34-b090d396d9bb';
 
 window.onload = function () {
     cardGame.init(defaultNumberOfCards);
@@ -431,15 +431,19 @@ function onShowLeaderBoard(evt) {
         leaderBoard.style.visibility = 'visible';
     }
 
+    let leaderBoardTableWrapper = document.getElementById('leader-board-table-wrapper');
+
+    leaderBoardTableWrapper.innerHTML = 'loading...';
+
     getScores().then(data => {
-        let count = 0;
+        let count = 0;        
 
         if (cardGame.numberOfCards == 8) {
             if (data.scores8 === undefined || data.scores8.length == 0) {
-                document.getElementById('leader-board-table-wrapper').innerHTML = ''
+                leaderBoardTableWrapper.innerHTML = 'No score records.'
             }
             else {
-                document.getElementById('leader-board-table-wrapper').innerHTML = [
+                leaderBoardTableWrapper.innerHTML = [
                     '<table id="leader-board-table"><thead>',
                     // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
                     '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
@@ -450,10 +454,10 @@ function onShowLeaderBoard(evt) {
         }
         else if (cardGame.numberOfCards == 12 && data.scores12) {
             if (data.scores12 === undefined || data.scores12.length == 0) {
-                document.getElementById('leader-board-table-wrapper').innerHTML = ''
+                leaderBoardTableWrapper.innerHTML = 'No score records.'
             }
             else {
-                document.getElementById('leader-board-table-wrapper').innerHTML = [
+                leaderBoardTableWrapper.innerHTML = [
                     '<table id="leader-board-table"><thead>',
                     // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
                     '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
@@ -464,10 +468,10 @@ function onShowLeaderBoard(evt) {
         }
         else if (cardGame.numberOfCards == 16 && data.scores16) {
             if (data.scores16 === undefined || data.scores16.length == 0) {
-                document.getElementById('leader-board-table-wrapper').innerHTML = ''
+                leaderBoardTableWrapper.innerHTML = 'No score records.'
             }
             else {
-                document.getElementById('leader-board-table-wrapper').innerHTML = [
+                leaderBoardTableWrapper.innerHTML = [
                     '<table id="leader-board-table"><thead>',
                     // ...Object.keys(data.scores[0]).map(key => `<th>${key}</th>`),
                     '<th>Position</th><th>Name</th><th>Time (minutes:seconds)</th><th>Play at</th>',
