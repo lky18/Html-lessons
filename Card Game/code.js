@@ -184,11 +184,19 @@ class CardGame {
 
         this.totalTicks = this.totalTicks + 1;
         if (this.totalTicks % 10 == 0) {
-            secondsLabel.innerHTML = pad((this.totalTicks / 10) % 60);
-            minutesLabel.innerHTML = pad(parseInt((this.totalTicks / 10) / 60));
+
+            if (secondsLabel) {
+                secondsLabel.innerHTML = pad((this.totalTicks / 10) % 60);
+            }
+
+            if (minutesLabel) {
+                minutesLabel.innerHTML = pad(parseInt((this.totalTicks / 10) / 60));
+            }
         }
 
-        ticksLabel.innerHTML = pad(this.totalTicks);
+        if (ticksLabel) {
+            ticksLabel.innerHTML = pad(this.totalTicks);
+        }
     }
 
     resetCountDown() {
@@ -196,9 +204,17 @@ class CardGame {
         let secondsLabel = document.getElementById("seconds");
         let ticksLabel = document.getElementById("ticks");
 
-        secondsLabel.innerHTML = '00';
-        minutesLabel.innerHTML = '00';
-        ticksLabel.innerHTML = '00';
+        if (secondsLabel) {
+            secondsLabel.innerHTML = '00';
+        }
+
+        if (minutesLabel) {
+            minutesLabel.innerHTML = '00';
+        }
+
+        if (ticksLabel) {
+            ticksLabel.innerHTML = '00';
+        }
     }
 
     assignCardNumber() {
@@ -436,7 +452,7 @@ function onShowLeaderBoard(evt) {
     leaderBoardTableWrapper.innerHTML = 'loading...';
 
     getScores().then(data => {
-        let count = 0;        
+        let count = 0;
 
         if (cardGame.numberOfCards == 8) {
             if (data.scores8 === undefined || data.scores8.length == 0) {
