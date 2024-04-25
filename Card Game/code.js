@@ -406,7 +406,7 @@ class CardGame {
 
 const defaultNumberOfCards = 8;
 const cardGame = new CardGame();
-const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/72b1d0c8-64d1-49de-bc52-a8f29caf3faf';
+const apiUrl = 'https://api.jsonstorage.net/v1/json/5725bb31-8a05-4754-ba35-8f12024e78e4/60e7ff10-baa9-444d-ac9f-b4e561a60d56';
 const apiKey = '6b8ac90e-9382-4a0c-b076-7e413d425d46'; //'8969a471-87b7-4758-9f34-b090d396d9bb';
 
 window.onload = function () {
