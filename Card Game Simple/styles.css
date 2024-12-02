@@ -57,14 +57,14 @@
 }
 
 .card-face-front {
-    background-image: url("card-back.png");
+    background-image: url("card-back-hs.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
 }
 
 .card-face-back {
-    background-image: url("card-front.png");
+    background-image: url("card-front-hs.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -73,8 +73,8 @@
 
 .card-number {
     position: absolute;
-    top: 10px;
-    left: 30px;
+    top: 20px;
+    left: 35px;
 }
 
 .new-game-button {
