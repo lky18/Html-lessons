@@ -1,0 +1,47 @@
+.parent {
+    padding: 5px;
+    background-color: #00AAFF;
+
+    position: relative;
+
+    height: 1000px;
+}
+
+.child {
+    padding: 5px;
+
+    /* position: static; */
+
+    /* position: relative; */
+
+    /* position: relative; */
+    /* bottom: 10px;
+    right: 10px; */
+    /* top: 30px;
+    left: 10px; */
+
+    /* position: absolute; */
+
+    /* position: absolute;
+    top: 0;
+    left: 100px; */
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    position: sticky;
+    top: 10px;
+}
+
+.child-one {
+    background-color: rgb(116, 255, 116);
+}
+
+.child-two {
+    background-color: rgb(248, 117, 117);
+}
+
+.child-three {
+    background-color: rgb(255, 116, 232);
+}
