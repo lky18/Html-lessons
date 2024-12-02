@@ -221,7 +221,7 @@ function setCardNumber(cardId, number) {
     card.dataset.number = number;
 
     let face = card.querySelector('.card-face-back');
-    face.innerHTML = number;
+    face.innerHTML = `<span class="card-number">${number}</span>`;
 }
 
 function setCardMatch(cardId) {
